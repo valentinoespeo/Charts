@@ -524,9 +524,9 @@ open class LineChartRenderer: LineRadarRenderer
         }
     }
     
-    open override func drawExtras(context: CGContext)
+    open override func drawExtras(context: CGContext)//we do not need extras
     {
-        drawCircles(context: context)
+        //drawCircles(context: context)
     }
     
     private func drawCircles(context: CGContext)
