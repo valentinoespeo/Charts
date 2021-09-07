@@ -692,46 +692,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
             // If drag is enabled and we are in a position where there's something to drag:
             //  * If we're zoomed in, then obviously we have something to drag.
             //  * If we have a drag offset - we always have something to drag
-            if !self.hasNoDragOffset || !self.isFullyZoomedOut
-            {
-                _isDragging = true
-                
-                _closestDataSetToTouch = getDataSetByTouchPoint(point: recognizer.nsuiLocationOfTouch(0, inView: self))
-                
-                var translation = recognizer.translation(in: self)
-                if !self.dragXEnabled
-                {
-                    translation.x = 0.0
-                }
-                else if !self.dragYEnabled
-                {
-                    translation.y = 0.0
-                }
-                
-                let didUserDrag = translation.x != 0.0 || translation.y != 0.0
-                
-                // Check to see if user dragged at all and if so, can the chart be dragged by the given amount
-                if didUserDrag && !performPanChange(translation: translation)
-                {
-                    if _outerScrollView !== nil
-                    {
-                        // We can stop dragging right now, and let the scroll view take control
-                        _outerScrollView = nil
-                        _isDragging = false
-                    }
-                }
-                else
-                {
-                    if _outerScrollView !== nil
-                    {
-                        // Prevent the parent scroll view from scrolling
-                        _outerScrollView?.nsuiIsScrollEnabled = false
-                    }
-                }
-                
-                _lastPanPoint = recognizer.translation(in: self)
-            }
-            else if self.isHighlightPerDragEnabled
+            if self.isHighlightPerDragEnabled
             {
                 // We will only handle highlights on NSUIGestureRecognizerState.Changed
                 
@@ -740,25 +701,7 @@ open class BarLineChartViewBase: ChartViewBase, BarLineScatterCandleBubbleChartD
         }
         else if recognizer.state == NSUIGestureRecognizerState.changed
         {
-            if _isDragging
-            {
-                let originalTranslation = recognizer.translation(in: self)
-                var translation = CGPoint(x: originalTranslation.x - _lastPanPoint.x, y: originalTranslation.y - _lastPanPoint.y)
-                
-                if !self.dragXEnabled
-                {
-                    translation.x = 0.0
-                }
-                else if !self.dragYEnabled
-                {
-                    translation.y = 0.0
-                }
-                
-                let _ = performPanChange(translation: translation)
-                
-                _lastPanPoint = originalTranslation
-            }
-            else if isHighlightPerDragEnabled
+            if isHighlightPerDragEnabled
             {
                 let h = getHighlightByTouchPoint(recognizer.location(in: self))
                 
